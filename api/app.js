@@ -1,4 +1,5 @@
 import express from "express"
+import cookieParser from "cookie-parser"
 import postRoute from "./routes/post.route.js"
 import authRoute from "./routes/auth.route.js"
 
@@ -8,6 +9,7 @@ const app = express()
 
 //Permitindo receber JSON
 app.use(express.json())
+app.use(cookieParser())
 
 //Declarando Rotas
 app.use("/api/post", postRoute)

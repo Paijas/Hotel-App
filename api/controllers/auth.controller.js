@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt"; 
 import prisma from "../lib/prisma.js"
-
+import jwt from "jsonwebtoken"
 //Criando metodo Register
 
 export const  register = async (req,res)=>{
@@ -22,9 +22,10 @@ export const  register = async (req,res)=>{
             },
         })
 
-        const users = await prisma.usuario.findMany()
-
         res.status(201).json({message:"O usuário foi criado com sucesso"})
+        
+        const users = await prisma.usuario.findMany()
+      
 
     } catch (err) {
         console.error(err)
@@ -34,12 +35,47 @@ export const  register = async (req,res)=>{
 
     
 }
-export const  login = (req,res)=>{
-   const {username,password,email} = req.body
 
-   //VERIFICAR SE O USUARIO EXISTE
 
-   //VERIFICAR SE A SENHA ESTA CORRETA
+export const  login = async (req,res)=>{
+
+   const {username,email,password} = req.body
+
+   try {
+    
+    //VERIFICAR SE O USUARIO EXISTE
+
+    const user = await prisma.usuario.findUnique({
+        where:{username}
+    })
+
+    if(!user) return res.status(401).json({message:"Credencial Invalida"})
+
+   //VERIFICANDO SE A SENHA ESTA CORRETA
+   
+    const isPasswordValid = await bcrypt.compare(password,user.password) //(SENHA INSERIDA,SENHA DO USER)
+    if(!isPasswordValid) return res.status(401).json({message:"Credencial Invalida"})
+
+   //GERAR COOKIE TOKEN e ENVIAR AO USUARIO
+
+   
+   const age = 1000 * 60 * 60 * 24 * 7
+
+   const token = jwt.sign({
+    id:user.id
+   }, "manga",{expiresIn:age})
+
+    res.cookie("token",token,{
+        httpOnly:true,
+        maxAge:age,
+        
+    }).status(200).json({message:"Login feito com sucesso!"})
+
+
+   } catch (err) {
+        console.log(err)
+        res.status(500).json({message:"Falha no login"})
+   }
 }
 export const  logout = (req,res)=>{
   
