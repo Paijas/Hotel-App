@@ -36,7 +36,6 @@ export const  register = async (req,res)=>{
     
 }
 
-
 export const  login = async (req,res)=>{
 
    const {username,email,password} = req.body
@@ -78,5 +77,5 @@ export const  login = async (req,res)=>{
    }
 }
 export const  logout = (req,res)=>{
-  
+  res.clearCookie("token").status(200).json({message:"Logout feito com sucesso!"})
 }
