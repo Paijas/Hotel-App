@@ -64,11 +64,13 @@ export const  login = async (req,res)=>{
     id:user.id
    }, "manga",{expiresIn:age})
 
+   const {userPassword, ...userInfo} =user
+
     res.cookie("token",token,{
         httpOnly:true,
         maxAge:age,
         
-    }).status(200).json({message:"Login feito com sucesso!"})
+    }).status(200).json({userInfo})
 
 
    } catch (err) {
