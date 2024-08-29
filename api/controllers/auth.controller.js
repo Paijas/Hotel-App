@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken"
 
 export const  register = async (req,res)=>{
     const {username,email,password} = req.body
-
+  
   
     try {
         //HASH SENHA
@@ -24,7 +24,7 @@ export const  register = async (req,res)=>{
 
         res.status(201).json({message:"O usuário foi criado com sucesso"})
         
-        const users = await prisma.usuario.findMany()
+       
       
 
     } catch (err) {
@@ -38,7 +38,7 @@ export const  register = async (req,res)=>{
 
 export const  login = async (req,res)=>{
 
-   const {username,email,password} = req.body
+   const {username,password} = req.body
 
    try {
     
